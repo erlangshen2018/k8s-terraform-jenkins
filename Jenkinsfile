@@ -4,6 +4,8 @@ pipeline {
   environment {
     TF_IN_AUTOMATION = "true"
     KUBECONFIG_FILE = credentials('kubeconfig-jenkins-sa') // Jenkins Secret File ID
+    KUBECONFIG_DIR = '/tmp/kubeconfig'
+    KUBECONFIG_PATH = '/tmp/kubeconfig/config'
   }
 
   stages {
@@ -16,9 +18,10 @@ pipeline {
     stage('Prepare Kubeconfig') {
       steps {
         sh '''
-          mkdir -p $WORKSPACE/kubeconfig
-          cp "$KUBECONFIG_FILE" $WORKSPACE/kubeconfig/config
-          export KUBECONFIG=$WORKSPACE/kubeconfig/config
+          mkdir -p $KUBECONFIG_DIR
+          cp "$KUBECONFIG_FILE" $KUBECONFIG_PATH
+          chmod 600 $KUBECONFIG_PATH
+          export KUBECONFIG=$KUBECONFIG_PATH
           echo "✅ Kubeconfig prepared at $KUBECONFIG"
         '''
       }
@@ -26,25 +29,25 @@ pipeline {
 
     stage('Terraform Init') {
       steps {
-        sh 'terraform init'
+        sh "KUBECONFIG=$KUBECONFIG_PATH terraform init"
       }
     }
 
     stage('Terraform Validate') {
       steps {
-        sh 'terraform validate'
+        sh "KUBECONFIG=$KUBECONFIG_PATH terraform validate"
       }
     }
 
     stage('Terraform Plan') {
       steps {
-        sh 'terraform plan -out=tfplan'
+        sh "KUBECONFIG=$KUBECONFIG_PATH terraform plan -out=tfplan"
       }
     }
 
     stage('Terraform Apply') {
       steps {
-        sh 'terraform apply -auto-approve tfplan'
+        sh "KUBECONFIG=$KUBECONFIG_PATH terraform apply -auto-approve tfplan"
       }
     }
   }
