@@ -3,12 +3,26 @@ pipeline {
 
   environment {
     TF_IN_AUTOMATION = "true"
+    // 这里的 'kubeconfig' 是你 Jenkins Credentials 里 Secret File 的 ID
+    KUBECONFIG_FILE = credentials('kubeconfig')
   }
 
   stages {
     stage('Clone GitHub Repo') {
       steps {
-        git 'https://github.com/your-org/k8s-terraform-jenkins.git'
+        git 'https://github.com/erlangshen2018/k8s-terraform-jenkins.git'
+      }
+    }
+
+    stage('Prepare Kubeconfig') {
+      steps {
+        // 把 Secret File 复制到工作目录，并设置环境变量
+        sh '''
+          mkdir -p $WORKSPACE/.kube
+          cp "$KUBECONFIG_FILE" $WORKSPACE/.kube/config
+          export KUBECONFIG=$WORKSPACE/.kube/config
+          echo "Kubeconfig prepared at $KUBECONFIG"
+        '''
       }
     }
 
@@ -32,7 +46,7 @@ pipeline {
 
     stage('Terraform Apply') {
       steps {
-        input message: "Apply Terraform changes?"  // 可交互确认
+        input message: "Apply Terraform changes?"
         sh 'terraform apply -auto-approve tfplan'
       }
     }
