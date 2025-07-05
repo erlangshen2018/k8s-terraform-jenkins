@@ -31,4 +31,5 @@ kubectl get svc,pods
 - 添加远程状态（S3 + DynamoDB）
 - 支持多环境（dev/stage/prod）
 - 配合 GitOps 实现全自动 CI/CD
+
 - 
