@@ -1,3 +1,3 @@
 provider "kubernetes" {
-  config_path = "$KUBECONFIG"
+  config_path = "${path.module}/kubeconfig/config"
 }
