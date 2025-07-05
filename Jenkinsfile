@@ -3,8 +3,7 @@ pipeline {
 
   environment {
     TF_IN_AUTOMATION = "true"
-    // 这里的 'kubeconfig-jenkins-sa' 是你 Jenkins Credentials 里 Secret File 的 ID
-    KUBECONFIG_FILE = credentials('kubeconfig-jenkins-sa')
+    KUBECONFIG_FILE = credentials('kubeconfig-jenkins-sa') // Jenkins Secret File ID
   }
 
   stages {
@@ -16,12 +15,11 @@ pipeline {
 
     stage('Prepare Kubeconfig') {
       steps {
-        // 把 Secret File 复制到工作目录，并设置环境变量
         sh '''
-          mkdir -p $WORKSPACE/.kube
-          cp "$KUBECONFIG_FILE" $WORKSPACE/.kube/config
-          export KUBECONFIG=$WORKSPACE/.kube/config
-          echo "Kubeconfig prepared at $KUBECONFIG"
+          mkdir -p $WORKSPACE/kubeconfig
+          cp "$KUBECONFIG_FILE" $WORKSPACE/kubeconfig/config
+          export KUBECONFIG=$WORKSPACE/kubeconfig/config
+          echo "✅ Kubeconfig prepared at $KUBECONFIG"
         '''
       }
     }
