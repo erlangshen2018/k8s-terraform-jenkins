@@ -33,3 +33,5 @@ kubectl get svc,pods
 - 配合 GitOps 实现全自动 CI/CD
 
 - 
+
+
