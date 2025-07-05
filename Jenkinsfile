@@ -3,7 +3,7 @@ pipeline {
 
   environment {
     TF_IN_AUTOMATION = "true"
-    // 这里的 'kubeconfig' 是你 Jenkins Credentials 里 Secret File 的 ID
+    // 这里的 'kubeconfig-jenkins-sa' 是你 Jenkins Credentials 里 Secret File 的 ID
     KUBECONFIG_FILE = credentials('kubeconfig-jenkins-sa')
   }
 
