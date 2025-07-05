@@ -13,6 +13,6 @@ resource "kubernetes_service" "nginx" {
       target_port = 80
     }
 
-    type = "LoadBalancer"
+    type = "NodePort"  # 改成 NodePort
   }
 }
