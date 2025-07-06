@@ -38,3 +38,7 @@ kubectl get svc,pods
 
 
 
+
+
+
+
